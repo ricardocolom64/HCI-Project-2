@@ -27,23 +27,21 @@ print("The URL of the API request:" + games_url)
 games_dict = requests.get(games_url).json()
 
 games_list = []
-game_count = 0
 currGameGenres = ""
 
 for i in games_dict["results"]:
-    game_count += 1
-    if game_count <= 999:
-        for j in i["genres"]:
-            if(len(currGameGenres) == 0):
-                currGameGenres += j["name"]
-            else:
-                currGameGenres += ", " + j["name"]
-        games_list.append([i["name"], currGameGenres, i["rating"], i["id"]])
-        currGameGenres = ""
+    for j in i["genres"]:
+        if(len(currGameGenres) == 0):
+            currGameGenres += j["name"]
+        else:
+            currGameGenres += ", " + j["name"]
+    games_list.append([i["name"], currGameGenres, i["rating"], i["id"]])
+    currGameGenres = ""
 
 games_df = pd.DataFrame(
     games_list,
     columns=('Game', 'Genre', 'Rating', 'Unique ID'))
 
 st.dataframe(games_df)
+
 selected_games = st.selectbox('Select game:', games_df.index)
